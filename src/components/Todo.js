@@ -18,16 +18,12 @@ const todo = props => {
           todos.push({ id: key, name: res.data[key].name });
         }
         setToDoList(todos);
-        console.log(res.data);
       });
-    return () => {
-      console.log("clean");
-    };
+    return () => {};
   }, []);
 
-  const mouseMoveHandler = event => {
-    console.log(event.clientX, event.clientY);
-  };
+  const mouseMoveHandler = event => {};
+
   useEffect(() => {
     document.addEventListener("mousemove", mouseMoveHandler);
     return () => {
