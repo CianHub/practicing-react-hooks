@@ -20,6 +20,19 @@ const todo = props => {
         setToDoList(todos);
         console.log(res.data);
       });
+    return () => {
+      console.log("clean");
+    };
+  }, []);
+
+  const mouseMoveHandler = event => {
+    console.log(event.clientX, event.clientY);
+  };
+  useEffect(() => {
+    document.addEventListener("mousemove", mouseMoveHandler);
+    return () => {
+      document.removeEventListener("mousemove", mouseMoveHandler);
+    };
   }, []);
 
   const todoAddHandler = () => {
