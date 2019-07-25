@@ -1,11 +1,15 @@
-import React, { useState, useEffect, useReducer, useRef } from "react";
+import React, { useState, useEffect, useReducer, useRef, useMemo } from "react";
 import axios from "axios";
+import List from "./list";
+import { useFormInput } from "../hooks/forms";
 
 const todo = props => {
+  const [inputIsValid, setInputIsValid] = useState(false);
   //const [todoName, setTodoName] = useState("");
   // const [submittedTodo, setSubmittedTodo] = useState(null);
   //const [todoList, setToDoList] = useState([]);
-  const todoInputRef = useRef();
+  //const todoInputRef = useRef();
+  const todoInput = useFormInput();
 
   //const [todoState, setTodoState] = useState({ inputValue: "", todoList: [] });
   const todoListReducer = (state, action) => {
@@ -48,7 +52,7 @@ const todo = props => {
   }, []);
 
   const todoAddHandler = () => {
-    const todoName = todoInputRef.current.value;
+    const todoName = todoInput.value;
 
     axios
       .post("https://react-hooks-project-c35c1.firebaseio.com/todos.json", {
@@ -72,26 +76,35 @@ const todo = props => {
       .catch(err => console.log(err));
   };
 
+  const inputValidationHandler = event => {
+    if (event.target.value.trim() === "") {
+      setInputIsValid(false);
+    } else {
+      setInputIsValid(true);
+    }
+  };
+
   console.log(todoList);
   return (
     <React.Fragment>
       <input
         type="text"
         placeholder="Todo"
-        //onChange={inputChangeHandler}
-        //value={todoName}
-        ref={todoInputRef}
+        onChange={todoInput.onChange}
+        value={todoInput.value}
+        style={{
+          backgroundColor: todoInput.validity === true ? "transparent" : "red"
+        }}
       />
       <button type="button" onClick={todoAddHandler.bind(this)}>
         Add
       </button>
-      <ul>
-        {todoList.map(todo => (
-          <li key={todo.id} onClick={todoRemoveHandler.bind(this, todo.id)}>
-            {todo.name}
-          </li>
-        ))}
-      </ul>
+      {useMemo(
+        () => (
+          <List todoList={todoList} todoRemoveHandler={todoRemoveHandler} />
+        ),
+        [todoList]
+      )}
     </React.Fragment>
   );
 };
